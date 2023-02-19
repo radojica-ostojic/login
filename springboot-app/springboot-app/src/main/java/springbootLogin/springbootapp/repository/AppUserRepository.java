@@ -22,4 +22,16 @@ public interface AppUserRepository
     @Query("UPDATE AppUser a " +
             "SET a.enabled = TRUE WHERE a.email = ?1")
     int enableAppUser(@Param("email") String email);
+
+
+    //      TODO: if email not confirmed send confirmation email
+    @Transactional
+    @Query( "select count(c.id) " +
+            "from ConfirmationToken c " +
+            "inner join AppUser a " +
+            "on c.id = a.id " +
+            "where c.confirmedAt is null " +
+            "and c.expiresAt > CURRENT_TIMESTAMP " +
+            "and a.email = ?1")
+    int emailExists(@Param("email") String email);
 }

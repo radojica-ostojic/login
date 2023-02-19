@@ -1,11 +1,13 @@
 package springbootLogin.springbootapp.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import springbootLogin.springbootapp.entity.AppUser;
 import springbootLogin.springbootapp.entity.ConfirmationToken;
 import springbootLogin.springbootapp.repository.AppUserRepository;
@@ -37,6 +39,9 @@ public class AppUserService implements UserDetailsService {
         if (userExists){
 //      TODO: check attributes if they are the same
 //      TODO: if email not confirmed send confirmation email
+            if (appUserRepository.emailExists(appUser.getEmail()) > 0){
+                throw new IllegalStateException("confirmation email is sent and still valid");
+            }
 
             throw new IllegalStateException("email already taken");
         }

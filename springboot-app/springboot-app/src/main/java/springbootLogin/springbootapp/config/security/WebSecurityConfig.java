@@ -30,7 +30,8 @@ public class WebSecurityConfig {
                 .permitAll()
                 .anyRequest()
                 .authenticated().and()
-                .formLogin();
+                .formLogin()
+                .defaultSuccessUrl("/homepage.html", true);
 
         return http.build();
     }
