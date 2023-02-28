@@ -1,5 +1,8 @@
 package springbootLogin.springbootapp.config.security;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -7,9 +10,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import springbootLogin.springbootapp.entity.AppUser;
 import springbootLogin.springbootapp.service.AppUserService;
+
+import java.io.IOException;
 
 @Configuration
 @AllArgsConstructor
@@ -20,6 +28,8 @@ public class WebSecurityConfig {
     private AppUserService appUserService;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+//    @Autowired
+//    private AppUser appUser;
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -30,10 +40,23 @@ public class WebSecurityConfig {
                 .permitAll()
                 .anyRequest()
                 .authenticated().and()
-                .formLogin()
-                .defaultSuccessUrl("/homepage.html", true);
+                .formLogin().successHandler(new AuthenticationSuccessHandler() {
 
-        return http.build();
+                    @Override
+                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                                        Authentication authentication) throws IOException, ServletException {
+                        // run custom logics upon successful login
+
+                        AppUser appUser = (AppUser) authentication.getPrincipal();
+                        String username = appUser.getUsername();
+                        String role = appUserService.getRole(username);
+                        System.out.println("The user " + username + " has logged in.");
+                        String location = "/" + role + ".html";
+                        response.sendRedirect(location);
+                    }
+                });
+
+                        return http.build();
     }
 
     @Bean

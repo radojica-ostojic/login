@@ -34,4 +34,8 @@ public interface AppUserRepository
             "and c.expiresAt > CURRENT_TIMESTAMP " +
             "and a.email = ?1")
     int emailExists(@Param("email") String email);
+
+    @Transactional
+    @Query( "SELECT appUserRole FROM AppUser WHERE email = ?1")
+    String fetchAppUserRole(@Param("email") String email);
 }
