@@ -40,24 +40,17 @@ public class WebSecurityConfig {
                 .permitAll()
                 .anyRequest()
                 .authenticated().and()
-                .formLogin().successHandler(new AuthenticationSuccessHandler() {
+                .formLogin().defaultSuccessUrl("/user.html")
+                .successHandler(successHandler());
 
-                    @Override
-                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                                        Authentication authentication) throws IOException, ServletException {
-                        // run custom logics upon successful login
-
-                        AppUser appUser = (AppUser) authentication.getPrincipal();
-                        String username = appUser.getUsername();
-                        String role = appUserService.getRole(username);
-                        System.out.println("The user " + username + " has logged in.");
-                        String location = "/" + role + ".html";
-                        response.sendRedirect(location);
-                    }
-                });
-
-                        return http.build();
+        return http.build();
     }
+
+    @Bean
+    public CustomHandler successHandler(){
+        return new CustomHandler();
+    }
+
 
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
