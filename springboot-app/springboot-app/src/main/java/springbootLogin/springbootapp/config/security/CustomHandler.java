@@ -20,19 +20,15 @@ public class CustomHandler extends SavedRequestAwareAuthenticationSuccessHandler
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
                                         throws IOException, ServletException {
 
+        String targetUrl;
         if (isAdminAuthority(authentication)){
-            String targetUrl = "/admin.html";
-            clearAuthenticationAttributes(request);
-            getRedirectStrategy().sendRedirect(request, response, targetUrl);
+            targetUrl = "/admin.html";
         }
-        else if (!isAdminAuthority(authentication)){
-            String targetUrl = "/user.html";
-            clearAuthenticationAttributes(request);
-            getRedirectStrategy().sendRedirect(request, response, targetUrl);
+        else {
+            targetUrl = "/user.html";
         }
-//        else {
-//            super.onAuthenticationSuccess(request, response, authentication);
-//        } 
+        clearAuthenticationAttributes(request);
+        getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
     protected boolean isAdminAuthority(final Authentication authentication){
