@@ -25,6 +25,7 @@ public class RegistrationController {
         return registrationService.confirmToken(token);
     }
 
+    // using PreAuthorize annotation, pages admin.html and user.html can't be accessed without previous login
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping(path = "/admin.html")
     public String redirectionAdmin(){

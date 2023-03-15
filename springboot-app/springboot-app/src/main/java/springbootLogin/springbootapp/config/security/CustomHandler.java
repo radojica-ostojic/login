@@ -21,6 +21,8 @@ public class CustomHandler extends SavedRequestAwareAuthenticationSuccessHandler
                                         throws IOException, ServletException {
 
         String targetUrl;
+
+        //checking if user that is trying to log in has ADMIN or USER role
         if (isAdminAuthority(authentication)){
             targetUrl = "/admin.html";
         }
